@@ -24,47 +24,55 @@ const createBoard = function(w, h) {
   return board;
 }
 
-const drawHexagon = function(board, pos, scale) {
+const drawHexagon = function(board, pos, scale, character) {
   const width = getWidth(scale);
   for (let i = 0; i < getHeight(scale) / 2; i++) {
     const startX = pos.x - parseInt(width / 2) + i;
     for (let j = 0; j < width - (2 * i); j++) {
-      if (j % 2 == 0) {
-        board[pos.y + i][startX + j] = '▲';
+      if (character) {
+        board[pos.y + i][startX + j] = character;
       } else {
-        board[pos.y + i][startX + j] = '▼';
+        if (j % 2 == 0) {
+          board[pos.y + i][startX + j] = '▲';
+        } else {
+          board[pos.y + i][startX + j] = '▼';
+        }
       }
     }
   }
   for (let i = 0; i < getHeight(scale) / 2; i++) {
     const startX = pos.x - parseInt(width / 2) + i;
     for (let j = 0; j < width - (2 * i); j++) {
-      if (j % 2 == 0) {
-        board[pos.y - (i + 1)][startX + j] = '▼';
+      if (character) {
+        board[pos.y - (i + 1)][startX + j] = character;
       } else {
-        board[pos.y - (i + 1)][startX + j] = '▲';
+        if (j % 2 == 0) {
+          board[pos.y - (i + 1)][startX + j] = '▼';
+        } else {
+          board[pos.y - (i + 1)][startX + j] = '▲';
+        }
       }
     }
   }
 }
 
-const sierpinski = function(n, scale, board, pos) {
+const sierpinski = function(n, scale, board, pos, character) {
   if (n === 0) {
-    drawHexagon(board, pos, scale);
+    drawHexagon(board, pos, scale, character);
     return;
   }
 
   // Sides
-  sierpinski(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1) - 1, y: pos.y });
-  sierpinski(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1) + 1, y: pos.y });
+  sierpinski(n - 1, scale - 1, board, { x: pos.x - getWidth(scale - 1) - 1, y: pos.y }, character);
+  sierpinski(n - 1, scale - 1, board, { x: pos.x + getWidth(scale - 1) + 1, y: pos.y }, character);
 
   // Top
-  sierpinski(n - 1, scale - 1, board, { x: pos.x - parseInt(getWidth(scale - 1) / 2) - 1, y: pos.y + getHeight(scale - 1) });
-  sierpinski(n - 1, scale - 1, board, { x: pos.x + parseInt(getWidth(scale - 1) / 2) + 1, y: pos.y + getHeight(scale - 1) });
+  sierpinski(n - 1, scale - 1, board, { x: pos.x - parseInt(getWidth(scale - 1) / 2) - 1, y: pos.y + getHeight(scale - 1) }, character);
+  sierpinski(n - 1, scale - 1, board, { x: pos.x + parseInt(getWidth(scale - 1) / 2) + 1, y: pos.y + getHeight(scale - 1) }, character);
 
   // Bottom
-  sierpinski(n - 1, scale - 1, board, { x: pos.x - parseInt(getWidth(scale - 1) / 2) - 1, y: pos.y - getHeight(scale - 1) });
-  sierpinski(n - 1, scale - 1, board, { x: pos.x + parseInt(getWidth(scale - 1) / 2) + 1, y: pos.y - getHeight(scale - 1) });
+  sierpinski(n - 1, scale - 1, board, { x: pos.x - parseInt(getWidth(scale - 1) / 2) - 1, y: pos.y - getHeight(scale - 1) }, character);
+  sierpinski(n - 1, scale - 1, board, { x: pos.x + parseInt(getWidth(scale - 1) / 2) + 1, y: pos.y - getHeight(scale - 1) }, character);
 }
 
 const draw = function(board) {
@@ -78,16 +86,20 @@ const draw = function(board) {
   return result;
 }
 
-const create = function(n, scale) {
+const create = function(n, config) {
   if (n === undefined || n < 0) {
     return '';
   }
-  if (scale === undefined || scale < n) {
-    scale = n;
+
+  let scale = n;
+  if (config && config.scale && config.scale > n) {
+    scale = config.scale;
   }
 
+  const character = config !== undefined && config.character !== undefined && config.character.length === 1 ? config.character : undefined;
+
   const board = createBoard(getWidth(scale), getHeight(scale));
-  sierpinski(n, scale, board, { x: parseInt(getWidth(scale) / 2.0), y: parseInt(getHeight(scale) / 2.0) }); 
+  sierpinski(n, scale, board, { x: parseInt(getWidth(scale) / 2.0), y: parseInt(getHeight(scale) / 2.0) }, character); 
   return draw(board);
 }
 
