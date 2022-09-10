@@ -27,7 +27,7 @@ then:
 ```
 const sierpinski = require('sierpinski-hexagon-cli');
 console.log(sierpinski.create(<n>));
-console.log(sierpinski.create(<n>, { size: <size>, character: <character> }));
+console.log(sierpinski.create(<n>, { size: <number>, character: <character> }));
 ```
 The config params are optional.
 
