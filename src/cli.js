@@ -3,13 +3,17 @@ const sierpinski = require('./index.js');
 
 const printUsage = function(showIntro) {
     if (showIntro) {
-        console.log('\n Print the Sierpinski Hexagon to the console!');
+        console.log(sierpinski.create(2));
+        console.log(' Print the Sierpinski Hexagon to the console!');
     }
     console.log('\n' + 
                 ' Usage:\n' + 
                 '   $ sierpinski-hexagon-cli <n>\n' + 
                 '   $ sierpinski-hexagon-cli <n> <size>\n' + 
                 '\n' + 
+                '   <n> is the recursive step, a number greater than or equal to 1\n' + 
+                '   <size> is the size to draw, a number greater than or equal to <n>\n' + 
+                '\n' +
                 ' Options:\n' + 
                 '   --character=<character>  Draw using 1 specific character\n');
 }
